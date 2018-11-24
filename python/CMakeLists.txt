@@ -22,3 +22,5 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/setup.py
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/pyopengv/__init__.py
                ${CMAKE_CURRENT_BINARY_DIR}/pyopengv/__init__.py
                COPYONLY)
+
+install(CODE "execute_process(COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/setup.py install)")

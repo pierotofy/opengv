@@ -35,4 +35,5 @@ setuptools.setup(
         ]
     },
     cmdclass={'bdist_wheel': platform_bdist_wheel},
+    zip_safe=False,
 )
