@@ -7,16 +7,18 @@ include_directories(${PYTHON_INCLUDE_DIRS})
 pybind11_add_module(pyopengv pyopengv.cpp)
 target_link_libraries(pyopengv PRIVATE opengv)
 
+set_target_properties(pyopengv PROPERTIES
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/pyopengv"
+)
 
-# Find where to install python libs.
-execute_process(COMMAND
-    ${PYTHON_EXECUTABLE} -c "import distutils.sysconfig; print('/'.join(distutils.sysconfig.get_python_lib().split('/')[-3:]))"
-    OUTPUT_VARIABLE PYTHON_SITE_PACKAGES OUTPUT_STRIP_TRAILING_WHITESPACE)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../README.txt
+               ${CMAKE_CURRENT_BINARY_DIR}/README.txt
+               COPYONLY)
 
-set(PYTHON_INSTALL_DIR
-    "${CMAKE_INSTALL_PREFIX}/${PYTHON_SITE_PACKAGES}"
-    CACHE PATH "Path where to install pyopengv")
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/setup.py
+               ${CMAKE_CURRENT_BINARY_DIR}/setup.py
+               COPYONLY)
 
-install(TARGETS pyopengv DESTINATION "${PYTHON_INSTALL_DIR}")
-
-message(python executable ${PYTHON_EXECUTABLE})
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/pyopengv/__init__.py
+               ${CMAKE_CURRENT_BINARY_DIR}/pyopengv/__init__.py
+               COPYONLY)

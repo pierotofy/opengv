@@ -14,7 +14,7 @@ class platform_bdist_wheel(bdist_wheel):
         self.root_is_pure = False
 
 
-readme = os.path.join(os.path.dirname(__file__), "..", "README.txt")
+readme = os.path.join(os.path.dirname(__file__), "README.txt")
 
 setuptools.setup(
     name='opengv',
