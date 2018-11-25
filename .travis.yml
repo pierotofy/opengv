@@ -1,64 +1,24 @@
-dist: trusty
-sudo: false
+sudo: required
 
-language: cpp
+services:
+  - docker
 
-compiler:
-  - clang
-  - gcc
+env: DOCKER_IMAGE=paulinus/opensfm-docker-base:manylinux1_x86_64
 
-cache:
-  apt: true
-
-addons:
-  apt:
-    packages:
-        - build-essential 
-        - python-dev 
-        - libboost-python-dev 
-        - python-numpy-dev
-        - libeigen3-dev
-
-env:
-  global:
-    # CMAKE minimal required version 3.1.0
-    - CMAKE_URL="https://cmake.org/files/v3.1/cmake-3.1.3-Linux-x86_64.tar.gz"
-    - CMAKE_ROOT=${TRAVIS_BUILD_DIR}/cmake
-    - CMAKE_SOURCE=${CMAKE_ROOT}/source
-    - CMAKE_INSTALL=${CMAKE_ROOT}/install
-
-before_install:
- # CMAKE most recent version
- - >
-    if [ "$(ls -A ${CMAKE_INSTALL})" ]; then
-      echo "CMake found in cache.";
-      ls -A ${CMAKE_INSTALL}
-      export PATH=${CMAKE_INSTALL}/bin:${PATH};
-      cmake --version
-    else
-      mkdir --parent ${CMAKE_SOURCE}
-      mkdir --parent ${CMAKE_INSTALL}
-      ls -A ${CMAKE_INSTALL}
-      travis_retry wget --no-check-certificate --quiet -O - ${CMAKE_URL} | tar --strip-components=1 -xz -C ${CMAKE_INSTALL}
-      export PATH=${CMAKE_INSTALL}/bin:${PATH};
-      cmake --version
-    fi
-
-
-before_script:
-  - mkdir build
-  - cd build
-  - >
-     if [ $CXX = "clang++" ]; then
-        cmake .. -DBUILD_TESTS:BOOL=ON -DBUILD_PYTHON:BOOL=ON -DCMAKE_CXX_FLAGS="-Wno-deprecated-register"
-     else
-        cmake .. -DBUILD_TESTS:BOOL=ON -DBUILD_PYTHON:BOOL=ON
-     fi
+install:
+  - docker pull $DOCKER_IMAGE
 
 script:
-  - make -j2 VERBOSE=1
-  - make test
+  - docker run --rm -v `pwd`:/io $DOCKER_IMAGE $PRE_CMD /io/python/build-wheels.sh
+  - ls wheelhouse/
 
-cache:
-  directories:
-    - $CMAKE_INSTALL
+deploy:
+  provider: releases
+  api_key:
+    secure: "nbu4tqTBqHg1bSJtSZyKetfsJcnvXfPH2I91mTSO5qhr3aIqPc5MWv/GwZFEITkAsyIKVWcaf0FFNynW5QqJBvvCiir3h9hwel6ORpAEsR2u2QpU5Y5lyjkxEAjVSeqoR9JLLLk/1xyS9sCCKWgCQNOcAaOhYlxcs0B2ew2hr6ZTd7pvWymxs3Xls3Bb6speDdlkqxtUbJt0ylPkj5wzHcS+vKczc2qDvrQEzuvLL7l+wXCPWk+ueBdKahH/JON+UPmdNI/UobjPEYA+ynwB1ykZw9OiUMHsvvH5xBeR6mM5vPzr7AXBmiaUcWQd37sd3a6Rk0tOF3qtPXCk2Yl03mlf3p2OOfaYeN/oPlADt7G3E6nIOVRg0LX65N0JPxvnGXFnkWa+5ATppiePp26EftXjLPLfj3ogWpUo8jVxgM1/nMsgcGY4Q3FRcMpl8SqyMpclH2RI9LhFhQHq23LOPM6d2bDOhosdB8npz9B7lE6UPSfF2LqANZivckPpUi2tXQ93LTEMj+aDZjk3CywNo2mHWFDIIvVWBnB1nL6K5V1GZTBVob3ew3z9ZPNAFZPTr5WfXruEvpK0ztTFKvnSPMVVk0Ud4MbrNOyLx0G5NxfbgTedD7fLfpiCGz581AXibyHj07r5P4e4lVqNubevtIGgOzKrVPUl/wShLycMAFc="
+  file_glob: true
+  file: wheelhouse/*.whl
+  skip_cleanup: true
+  draft: true
+  on:
+    branch: python-wheels

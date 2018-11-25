@@ -6,7 +6,7 @@ for PYBIN in /opt/python/*/bin; do
     mkdir -p /io/build
     cd /io/build
     cmake .. -DBUILD_TESTS=OFF -DBUILD_PYTHON=ON -DPYTHON_EXECUTABLE=${PYBIN}/python
-    make -j12
+    make -j2
     "${PYBIN}/pip" wheel /io/build/python -w /io/wheelhouse/
     rm -rf /io/build/python
 done
