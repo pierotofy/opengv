@@ -1,3 +1,9 @@
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+from __future__ import unicode_literals
+
+
 import pyopengv
 import numpy as np
 
@@ -192,7 +198,7 @@ def test_relative_pose_ransac():
     d = RelativePoseDataset(100, 0.0, 0.3)
 
     ransac_transformation = pyopengv.relative_pose_ransac(
-        d.bearing_vectors1, d.bearing_vectors2, "NISTER", 0.01, 1000)
+        d.bearing_vectors1, d.bearing_vectors2, b"NISTER", 0.01, 1000)
 
     assert same_transformation(d.position, d.rotation, ransac_transformation)
 

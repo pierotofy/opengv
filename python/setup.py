@@ -4,14 +4,6 @@ from __future__ import print_function
 
 import setuptools
 import os.path
-from wheel.bdist_wheel import bdist_wheel
-
-
-class platform_bdist_wheel(bdist_wheel):
-    """Patched bdist_well to make sure wheels include platform tag."""
-    def finalize_options(self):
-        bdist_wheel.finalize_options(self)
-        self.root_is_pure = False
 
 
 readme = os.path.join(os.path.dirname(__file__), "README.txt")
@@ -34,6 +26,6 @@ setuptools.setup(
             'pyopengv.*',
         ]
     },
-    cmdclass={'bdist_wheel': platform_bdist_wheel},
+    ext_modules=[setuptools.Extension(name='pyopengv.pyopengv', sources=[])],
     zip_safe=False,
 )

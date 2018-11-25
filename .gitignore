@@ -1,5 +1,6 @@
 lib
 build
+wheelhouse
 *.mexa64
 *.pyc
 .vscode
