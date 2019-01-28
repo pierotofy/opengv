@@ -153,6 +153,8 @@ private:
       const Eigen::MatrixXd & p2,
       Eigen::MatrixXd & r );
 
+  #undef _C
+
   /** A matrix containing the coefficients of the Sturm-chain of the polynomial */
   Eigen::MatrixXd _C;
   /** The dimension _C, which corresponds to (polynomial order+1) */
